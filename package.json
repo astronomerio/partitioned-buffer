@@ -1,0 +1,13 @@
+{
+  "name": "partitioned-buffer",
+  "version": "1.0.0",
+  "description": "A class that encapsulates several sub-buffers that are partitioned by a specified key",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "Alois Barreras",
+  "license": "MIT",
+  "dependencies": {
+  }
+}
