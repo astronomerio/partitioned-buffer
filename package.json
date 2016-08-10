@@ -4,12 +4,19 @@
   "description": "A class that encapsulates several sub-buffers that are partitioned by a specified key",
   "main": "dist/index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "node -r babel-register -r babel-polyfill -r dotenv/config test/test.js | faucet"
   },
   "author": "Alois Barreras",
   "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.13.2",
-    "babel-preset-stage-3": "^6.11.0"
+    "babel-preset-stage-3": "^6.11.0",
+    "dotenv": "^2.0.0"
+  },
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "sinon": "^1.17.5",
+    "tape": "^4.6.0"
   }
 }
