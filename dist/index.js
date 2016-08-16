@@ -17,11 +17,11 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-    function _class(emitter) {
+    function _class(delegate) {
         _classCallCheck(this, _class);
 
         this.buffers = {};
-        this.emitter = emitter;
+        this.delegate = delegate;
     }
 
     _createClass(_class, [{
@@ -50,7 +50,7 @@ var _class = function () {
                                 }
 
                                 _context.next = 6;
-                                return this.readAndClearBuffer(buffer);
+                                return this.delegate.bufferShouldFlush(buffer);
 
                             case 6:
                             case 'end':
@@ -151,34 +151,6 @@ var _class = function () {
             }
 
             return flushAllBuffers;
-        }()
-    }, {
-        key: 'readAndClearBuffer',
-        value: function () {
-            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(buffer) {
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                    while (1) {
-                        switch (_context3.prev = _context3.next) {
-                            case 0:
-                                _context3.next = 2;
-                                return this.emitter.emit(buffer.records);
-
-                            case 2:
-                                buffer.clear();
-
-                            case 3:
-                            case 'end':
-                                return _context3.stop();
-                        }
-                    }
-                }, _callee3, this);
-            }));
-
-            function readAndClearBuffer(_x3) {
-                return _ref3.apply(this, arguments);
-            }
-
-            return readAndClearBuffer;
         }()
     }]);
 
