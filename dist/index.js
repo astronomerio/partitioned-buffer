@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _partitionedBuffer = require('./partitioned-buffer');
+var _subBuffer = require('./sub-buffer');
 
-var _partitionedBuffer2 = _interopRequireDefault(_partitionedBuffer);
+var _subBuffer2 = _interopRequireDefault(_subBuffer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16,15 +16,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _class = function () {
-    function _class(delegate) {
-        _classCallCheck(this, _class);
+var PartitionedBuffer = function () {
+    function PartitionedBuffer(delegate) {
+        _classCallCheck(this, PartitionedBuffer);
 
         this.buffers = {};
         this.delegate = delegate;
     }
 
-    _createClass(_class, [{
+    _createClass(PartitionedBuffer, [{
         key: 'push',
         value: function () {
             var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(key, data) {
@@ -35,7 +35,7 @@ var _class = function () {
                             case 0:
                                 // get internal buffer and push data
                                 if (!this.buffers[key]) {
-                                    this.buffers[key] = new _partitionedBuffer2.default();
+                                    this.buffers[key] = new _subBuffer2.default();
                                 }
 
                                 buffer = this.buffers[key];
@@ -50,7 +50,7 @@ var _class = function () {
                                 }
 
                                 _context.next = 6;
-                                return this.delegate.bufferShouldFlush(buffer);
+                                return this.delegate.bufferShouldFlush(buffer, key);
 
                             case 6:
                             case 'end':
@@ -97,7 +97,7 @@ var _class = function () {
                                 // emit records
 
                                 _context2.next = 11;
-                                return this.readAndClearBuffer(buffer);
+                                return this.delegate.bufferShouldFlush(buffer, key);
 
                             case 11:
                                 _iteratorNormalCompletion = true;
@@ -154,7 +154,7 @@ var _class = function () {
         }()
     }]);
 
-    return _class;
+    return PartitionedBuffer;
 }();
 
-exports.default = _class;
+exports.default = PartitionedBuffer;
