@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import assert from 'assert';
 import PartitionedBuffer from '../lib';
+import SubBuffer from '../lib/sub-buffer';
 
 describe('Partitioned Buffer', function () {
     var pb;
@@ -46,6 +47,21 @@ describe('Partitioned Buffer', function () {
             pb.push(key, data);
             const buffer = pb.getBufferWithKey(key);
             assert(flushBufferStub.calledWith(buffer, key));
+        });
+    });
+
+    describe('#getBufferWithKey', function () {
+        beforeEach(function () {
+            pb = new PartitionedBuffer(() => {});
+        });
+
+        it('returns the correct buffer', function () {
+            const expectedSubBuffer = new SubBuffer();
+            expectedSubBuffer.push(data);
+
+            pb.push(key, data);
+            const buffer = pb.getBufferWithKey(key);
+            assert.deepEqual(buffer, expectedSubBuffer);
         });
     });
 });
