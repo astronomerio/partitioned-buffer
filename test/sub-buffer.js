@@ -1,16 +1,30 @@
 import sinon from 'sinon';
-import test from 'blue-tape';
+import { assert } from 'chai';
 import SubBuffer from '../lib/sub-buffer';
 
-test('buffer pushes data', (t) => {
-    const subBuffer = new SubBuffer();
-    const data = ['foo', 'bar'];
-    subBuffer.push(data);
-    t.deepEqual(subBuffer.records[0], data);
-    t.end();
-});
+describe('Sub Buffer', function () {
 
-test('buffer calls flush buffer', t => {
-    const flushBufferStub = sinon.stub();
+    let subBuffer;
 
+    beforeEach(function () {
+        subBuffer = new SubBuffer();
+    });
+
+    it('should have right settings', function () {
+        assert.equal(subBuffer.records.length, 0);
+        assert.equal(subBuffer.currentSize, 0);
+    });
+
+    it('should push onto records', function () {
+        subBuffer.push('hello world');
+        assert.deepEqual(subBuffer.records, ['hello world']);
+    });
+
+    it('should clear records', function () {
+        subBuffer.push('hello world');
+        assert.deepEqual(subBuffer.records, ['hello world']);
+
+        subBuffer.clear();
+        assert.equal(subBuffer.records.length, 0);
+    });
 });
