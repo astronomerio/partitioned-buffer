@@ -17,11 +17,16 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var PartitionedBuffer = function () {
-    function PartitionedBuffer(delegate) {
+    function PartitionedBuffer(flushBuffer) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
         _classCallCheck(this, PartitionedBuffer);
 
         this.buffers = {};
-        this.delegate = delegate;
+        this.maxBytesPerFlush = options.maxBytesPerFlush || 500000;
+        this.maxRecordsPerFlush = options.maxRecordsPerFlush || 500;
+        this.maxMillisPerFlush = options.maxMillisPerFlush || 3000;
+        this.flushBuffer = flushBuffer;
     }
 
     _createClass(PartitionedBuffer, [{
@@ -34,25 +39,20 @@ var PartitionedBuffer = function () {
                         switch (_context.prev = _context.next) {
                             case 0:
                                 // get internal buffer and push data
-                                if (!this.buffers[key]) {
-                                    this.buffers[key] = new _subBuffer2.default();
-                                }
+                                buffer = this.getBufferWithKey(key);
 
-                                buffer = this.buffers[key];
-
-                                buffer.push(data);
-
+                                this.pushDataToBuffer(buffer, data);
                                 // check should flush and emit data
 
-                                if (!buffer.shouldFlush()) {
-                                    _context.next = 6;
+                                if (!this.bufferShouldFlush(buffer)) {
+                                    _context.next = 5;
                                     break;
                                 }
 
-                                _context.next = 6;
-                                return this.delegate.bufferShouldFlush(buffer, key);
+                                _context.next = 5;
+                                return this.flushBuffer(buffer, key);
 
-                            case 6:
+                            case 5:
                             case 'end':
                                 return _context.stop();
                         }
@@ -60,12 +60,38 @@ var PartitionedBuffer = function () {
                 }, _callee, this);
             }));
 
-            function push(_x, _x2) {
+            function push(_x2, _x3) {
                 return _ref.apply(this, arguments);
             }
 
             return push;
         }()
+    }, {
+        key: 'getBufferWithKey',
+        value: function getBufferWithKey(key) {
+            var buffer = this.buffers[key];
+            if (buffer) {
+                return buffer;
+            }
+
+            this.buffers[key] = new _subBuffer2.default();
+            return this.buffers[key];
+        }
+    }, {
+        key: 'pushDataToBuffer',
+        value: function pushDataToBuffer(buffer, data) {
+            buffer.push(data);
+        }
+    }, {
+        key: 'bufferShouldFlush',
+        value: function bufferShouldFlush(buffer) {
+            var overSizeLimit = buffer.currentSize >= this.maxBytesPerFlush;
+            var overRecordLimit = buffer.records.length >= this.maxRecordsPerFlush;
+            var timeSinceLastFlush = Date.now() - buffer.lastFlushMillis;
+            var overTimeLimit = timeSinceLastFlush >= this.maxMillisPerFlush;
+            var shouldFlush = overSizeLimit || overRecordLimit || overTimeLimit;
+            return shouldFlush;
+        }
     }, {
         key: 'flushAllBuffers',
         value: function () {
@@ -85,65 +111,65 @@ var PartitionedBuffer = function () {
 
                             case 6:
                                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                                    _context2.next = 14;
+                                    _context2.next = 15;
                                     break;
                                 }
 
                                 key = _step.value;
 
-                                // get individual buffer
+                                // get individual buffer and flush the records
                                 buffer = this.buffers[key];
-
-                                // emit records
-
                                 _context2.next = 11;
-                                return this.delegate.bufferShouldFlush(buffer, key);
+                                return this.flushBuffer(buffer.records, key);
 
                             case 11:
+                                buffer.clear();
+
+                            case 12:
                                 _iteratorNormalCompletion = true;
                                 _context2.next = 6;
                                 break;
 
-                            case 14:
-                                _context2.next = 20;
+                            case 15:
+                                _context2.next = 21;
                                 break;
 
-                            case 16:
-                                _context2.prev = 16;
+                            case 17:
+                                _context2.prev = 17;
                                 _context2.t0 = _context2['catch'](4);
                                 _didIteratorError = true;
                                 _iteratorError = _context2.t0;
 
-                            case 20:
-                                _context2.prev = 20;
+                            case 21:
                                 _context2.prev = 21;
+                                _context2.prev = 22;
 
                                 if (!_iteratorNormalCompletion && _iterator.return) {
                                     _iterator.return();
                                 }
 
-                            case 23:
-                                _context2.prev = 23;
+                            case 24:
+                                _context2.prev = 24;
 
                                 if (!_didIteratorError) {
-                                    _context2.next = 26;
+                                    _context2.next = 27;
                                     break;
                                 }
 
                                 throw _iteratorError;
 
-                            case 26:
-                                return _context2.finish(23);
-
                             case 27:
-                                return _context2.finish(20);
+                                return _context2.finish(24);
 
                             case 28:
+                                return _context2.finish(21);
+
+                            case 29:
                             case 'end':
                                 return _context2.stop();
                         }
                     }
-                }, _callee2, this, [[4, 16, 20, 28], [21,, 23, 27]]);
+                }, _callee2, this, [[4, 17, 21, 29], [22,, 24, 28]]);
             }));
 
             function flushAllBuffers() {
@@ -158,3 +184,4 @@ var PartitionedBuffer = function () {
 }();
 
 exports.default = PartitionedBuffer;
+;

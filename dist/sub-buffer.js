@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -10,42 +10,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var SubBuffer = function () {
     function SubBuffer() {
+        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
         _classCallCheck(this, SubBuffer);
 
         this.records = [];
         this.currentSize = 0;
         this.lastFlushMillis = Date.now();
-        this.maxBytesPerFlush = 500000;
-        this.maxRecordsPerFlush = 500;
-        this.maxMillisPerFlush = 300000;
     }
 
     _createClass(SubBuffer, [{
-        key: 'shouldFlush',
-        value: function shouldFlush() {
-            var overSizeLimit = this.currentSize >= this.maxBytesPerFlush;
-            var overRecordLimit = this.records.length >= this.maxRecordsPerFlush;
-
-            var timeSinceLastFlush = Date.now() - this.lastFlushMillis;
-            var overTimeLimit = timeSinceLastFlush >= this.maxMillisPerFlush;
-
-            var flush = overSizeLimit || overRecordLimit || overTimeLimit;
-
-            return flush;
-        }
-    }, {
-        key: 'push',
+        key: "push",
         value: function push(data) {
-            var string = new Buffer(data, 'base64').toString('utf8');
-            this.currentSize += string.length;
-            var recordData = JSON.parse(string);
-
-            var payload = recordData.data;
-
-            this.records.push(payload);
+            // TODO: add some checks for types of data to get the number of bytes so we can compare against maxByteSize
+            this.records.push(data);
         }
     }, {
-        key: 'clear',
+        key: "clear",
         value: function clear() {
             this.records = [];
             this.currentSize = 0;
@@ -57,3 +38,4 @@ var SubBuffer = function () {
 }();
 
 exports.default = SubBuffer;
+;
