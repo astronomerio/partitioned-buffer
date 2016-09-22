@@ -112,6 +112,7 @@ describe('Partitioned Buffer', function () {
    describe('#flushAllBuffers', function () {
        it('should call flush with all sub buffers', function (done) {
            const flushBufferStub = sinon.stub();
+           const clearStub = sinon.stub();
            pb = new PartitionedBuffer(flushBufferStub);
 
            // push onto pb with different keys to make different sub buffers
@@ -121,11 +122,22 @@ describe('Partitioned Buffer', function () {
            pb.push(key, data);
            pb.push(key2, data2);
 
+           // stub all the clear() on the sub buffers to make sure they're called
+           Object.keys(pb.buffers).forEach(function(key, index) {
+               const subBuffer = pb.buffers[key];
+               subBuffer.clear = clearStub;
+           });
+
            // flush all buffers is async, so it returns a promise
            pb.flushAllBuffers().then(() => {
+               // make sure flushBuffer was called with the right data
                assert(flushBufferStub.firstCall.calledWith([data], key));
                assert(flushBufferStub.secondCall.calledWith([data2], key2));
+               // make sure the buffers are being cleared
+               assert.ok(clearStub.calledTwice);
                done();
+           }).catch((e) => {
+               done(e);
            });
        });
    });
