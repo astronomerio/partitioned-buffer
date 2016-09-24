@@ -45,7 +45,7 @@ var PartitionedBuffer = function () {
                                 // check should flush and emit data
 
                                 if (!this.bufferShouldFlush(buffer)) {
-                                    _context.next = 5;
+                                    _context.next = 6;
                                     break;
                                 }
 
@@ -53,6 +53,9 @@ var PartitionedBuffer = function () {
                                 return this.flushBuffer(buffer.records, key);
 
                             case 5:
+                                this.clearBuffer(buffer);
+
+                            case 6:
                             case 'end':
                                 return _context.stop();
                         }
@@ -81,6 +84,11 @@ var PartitionedBuffer = function () {
         key: 'pushDataToBuffer',
         value: function pushDataToBuffer(buffer, data) {
             buffer.push(data);
+        }
+    }, {
+        key: 'clearBuffer',
+        value: function clearBuffer(buffer) {
+            buffer.clear();
         }
     }, {
         key: 'bufferShouldFlush',
@@ -123,7 +131,7 @@ var PartitionedBuffer = function () {
                                 return this.flushBuffer(buffer.records, key);
 
                             case 11:
-                                buffer.clear();
+                                this.clearBuffer(buffer);
 
                             case 12:
                                 _iteratorNormalCompletion = true;
