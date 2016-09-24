@@ -46,7 +46,7 @@ describe('Partitioned Buffer', function () {
             sinon.stub(pb, 'bufferShouldFlush').returns(true);
             pb.push(key, data);
             const buffer = pb.getBufferWithKey(key);
-            assert(flushBufferStub.calledWith(buffer, key));
+            assert(flushBufferStub.calledWith(buffer.records, key));
         });
     });
 
