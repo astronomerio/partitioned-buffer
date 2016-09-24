@@ -32,7 +32,7 @@ You can optionally pass in an options object as the second parameter in the cons
 const options = {
   maxBytesPerFlush: 500000,
   maxRecordsPerFlush: 500,
-  this.maxMillisPerFlush = 300000 // 5 minutes
+  maxMillisPerFlush = 300000 // 5 minutes
 };
 ```
 
