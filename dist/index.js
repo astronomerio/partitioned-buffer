@@ -50,7 +50,7 @@ var PartitionedBuffer = function () {
                                 }
 
                                 _context.next = 5;
-                                return this.flushBuffer(buffer, key);
+                                return this.flushBuffer(buffer.records, key);
 
                             case 5:
                             case 'end':
