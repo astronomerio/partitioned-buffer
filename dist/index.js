@@ -25,7 +25,7 @@ var PartitionedBuffer = function () {
         this.buffers = {};
         this.maxBytesPerFlush = options.maxBytesPerFlush || 500000;
         this.maxRecordsPerFlush = options.maxRecordsPerFlush || 500;
-        this.maxMillisPerFlush = options.maxMillisPerFlush || 3000;
+        this.maxMillisPerFlush = options.maxMillisPerFlush || 300000;
         this.flushBuffer = flushBuffer;
     }
 
