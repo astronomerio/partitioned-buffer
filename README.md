@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/astronomerio/partitioned-buffer.svg?style=svg)](https://circleci.com/gh/astronomerio/partitioned-buffer)
+
 # partitioned-buffer
 
 ### Description
