@@ -1,2 +1,2 @@
-import './partitioned-buffer';
-import './sub-buffer';
+require('./partitioned-buffer');
+require('./sub-buffer');

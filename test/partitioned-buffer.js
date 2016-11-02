@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import { assert } from 'chai';
-import PartitionedBuffer from '../lib';
-import SubBuffer from '../lib/sub-buffer';
+const sinon = require('sinon');
+const assert = require('chai').assert;
+const PartitionedBuffer = require('../lib/');
+const SubBuffer = require('../lib/sub-buffer');
+
 
 describe('Partitioned Buffer', function () {
     var pb;
@@ -43,129 +44,129 @@ describe('Partitioned Buffer', function () {
         });
 
         it('calls flushBuffer and clear buffer', async function () {
-            sinon.stub(pb, 'bufferShouldFlush').returns(true);
-            const clearStub = sinon.stub(pb, 'clearBuffer');
-            await pb.push(key, data);
-            const buffer = pb.getBufferWithKey(key);
-            assert(flushBufferStub.calledWith(buffer.records, key));
-            assert.ok(clearStub.calledWith(buffer));
+          sinon.stub(pb, 'bufferShouldFlush').returns(true);
+          const clearStub = sinon.stub(pb, 'clearBuffer');
+          await pb.push(key, data);
+          const buffer = pb.getBufferWithKey(key);
+          assert(flushBufferStub.calledWith(buffer.records, key));
+          assert.ok(clearStub.calledWith(buffer));
         });
     });
 
     describe('#clearBuffer', function () {
-        beforeEach(function () {
-            pb = new PartitionedBuffer(() => {});
-        });
+      beforeEach(function () {
+        pb = new PartitionedBuffer(() => {});
+      });
 
-        it('should call clear on the buffer', function () {
-            const sub = new SubBuffer();
-            const stub = sinon.stub(sub, 'clear');
-            pb.clearBuffer(sub);
-            assert.ok(stub.called);
-        });
+      it('should call clear on the buffer', function () {
+        const sub = new SubBuffer();
+        const stub = sinon.stub(sub, 'clear');
+        pb.clearBuffer(sub);
+        assert.ok(stub.called);
+      });
     });
 
     describe('#getBufferWithKey', function () {
-        beforeEach(function () {
-            pb = new PartitionedBuffer(() => {});
-        });
+      beforeEach(function () {
+        pb = new PartitionedBuffer(() => {});
+      });
 
-        it('returns the correct buffer', function () {
-            const expectedSubBuffer = new SubBuffer();
-            expectedSubBuffer.push(data);
+      it('returns the correct buffer', function () {
+        const expectedSubBuffer = new SubBuffer();
+        expectedSubBuffer.push(data);
 
-            pb.push(key, data);
-            const buffer = pb.getBufferWithKey(key);
+        pb.push(key, data);
+        const buffer = pb.getBufferWithKey(key);
 
-            // these are timestamps made when push() is called, sometimes they can be off by a millisecond and cause the test to fail, get rid of them :)
-            delete expectedSubBuffer.lastFlushMillis;
-            delete buffer.lastFlushMillis;
-            assert.deepEqual(buffer, expectedSubBuffer);
-        });
+        // these are timestamps made when push() is called, sometimes they can be off by a millisecond and cause the test to fail, get rid of them :)
+        delete expectedSubBuffer.lastFlushMillis;
+        delete buffer.lastFlushMillis;
+        assert.deepEqual(buffer, expectedSubBuffer);
+      });
     });
 
     describe('#pushDataToBuffer', function () {
-        beforeEach(function () {
-            pb = new PartitionedBuffer(() => {});
-        });
+      beforeEach(function () {
+        pb = new PartitionedBuffer(() => {});
+      });
 
-        it('should call push on the sub buffer', function () {
-            const subBuffer = new SubBuffer();
-            const stub = sinon.stub(subBuffer, 'push');
+      it('should call push on the sub buffer', function () {
+        const subBuffer = new SubBuffer();
+        const stub = sinon.stub(subBuffer, 'push');
 
-            pb.pushDataToBuffer(subBuffer, data);
-            assert(stub.calledWith(data));
-        });
+        pb.pushDataToBuffer(subBuffer, data);
+        assert(stub.calledWith(data));
+      });
     });
 
     describe('#bufferShouldFlush', function () {
-        beforeEach(function () {
-            pb = new PartitionedBuffer(() => {});
-        });
+      beforeEach(function () {
+        pb = new PartitionedBuffer(() => {});
+      });
 
-        it('should return true when buffer length is greater than max', function () {
-            // set the pb maxLength to be 1
-            pb.maxRecordsPerFlush = 1;
+      it('should return true when buffer length is greater than max', function () {
+        // set the pb maxLength to be 1
+        pb.maxRecordsPerFlush = 1;
 
-            const subBuffer = new SubBuffer();
+        const subBuffer = new SubBuffer();
 
-            // we'll push 2 objects, to be over the max
-            subBuffer.push(data);
-            subBuffer.push(data);
+        // we'll push 2 objects, to be over the max
+        subBuffer.push(data);
+        subBuffer.push(data);
 
-            const shouldFlush = pb.bufferShouldFlush(subBuffer);
-            assert(shouldFlush);
-        });
+        const shouldFlush = pb.bufferShouldFlush(subBuffer);
+        assert(shouldFlush);
+      });
 
-        it('should return false when buffer length is less than max', function () {
-            // set the pb maxLength to be 3
-            pb.maxRecordsPerFlush = 3;
+      it('should return false when buffer length is less than max', function () {
+        // set the pb maxLength to be 3
+        pb.maxRecordsPerFlush = 3;
 
-            const subBuffer = new SubBuffer();
+        const subBuffer = new SubBuffer();
 
-            // we'll push 2 objects, to still be under the max
-            subBuffer.push(data);
-            subBuffer.push(data);
+        // we'll push 2 objects, to still be under the max
+        subBuffer.push(data);
+        subBuffer.push(data);
 
-            const shouldFlush = pb.bufferShouldFlush(subBuffer);
-            assert.isFalse(shouldFlush);
-        });
+        const shouldFlush = pb.bufferShouldFlush(subBuffer);
+        assert.isFalse(shouldFlush);
+      });
     });
 
     describe('#flushAllBuffers', function () {
-        beforeEach(function () {
-            pb = new PartitionedBuffer(() => {});
+      beforeEach(function () {
+        pb = new PartitionedBuffer(() => {});
+      });
+
+      it('should call flush with all sub buffers', function (done) {
+        const flushBufferStub = sinon.stub();
+        const clearStub = sinon.stub();
+        pb = new PartitionedBuffer(flushBufferStub);
+
+        // push onto pb with different keys to make different sub buffers
+        const key2 = 'key2';
+        const data2 = 'hello world';
+
+        pb.push(key, data);
+        pb.push(key2, data2);
+
+        // stub all the clear() on the sub buffers to make sure they're called
+        Object.keys(pb.buffers).forEach(function(key, index) {
+          const subBuffer = pb.buffers[key];
+          subBuffer.clear = clearStub;
         });
 
-        it('should call flush with all sub buffers', function (done) {
-            const flushBufferStub = sinon.stub();
-            const clearStub = sinon.stub();
-            pb = new PartitionedBuffer(flushBufferStub);
-
-            // push onto pb with different keys to make different sub buffers
-            const key2 = 'key2';
-            const data2 = 'hello world';
-
-            pb.push(key, data);
-            pb.push(key2, data2);
-
-            // stub all the clear() on the sub buffers to make sure they're called
-            Object.keys(pb.buffers).forEach(function(key, index) {
-                const subBuffer = pb.buffers[key];
-                subBuffer.clear = clearStub;
-            });
-
-            // flush all buffers is async, so it returns a promise
-            pb.flushAllBuffers().then(() => {
-                // make sure flushBuffer was called with the right data
-                assert(flushBufferStub.firstCall.calledWith([data], key));
-                assert(flushBufferStub.secondCall.calledWith([data2], key2));
-                // make sure the buffers are being cleared
-                assert.ok(clearStub.calledTwice);
-                done();
-            }).catch((e) => {
-                done(e);
-            });
+        // flush all buffers is async, so it returns a promise
+        pb.flushAllBuffers().then(() => {
+          // make sure flushBuffer was called with the right data
+          assert(flushBufferStub.firstCall.calledWith([data], key));
+          assert(flushBufferStub.secondCall.calledWith([data2], key2));
+          // make sure the buffers are being cleared
+          assert.ok(clearStub.calledTwice);
+          done();
+        }).catch((e) => {
+          done(e);
         });
+      });
     });
 });

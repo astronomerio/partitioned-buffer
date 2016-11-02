@@ -1,6 +1,6 @@
-import sinon from 'sinon';
-import { assert } from 'chai';
-import SubBuffer from '../lib/sub-buffer';
+const sinon = require('sinon');
+const assert = require('chai').assert;
+const SubBuffer = require('../lib/sub-buffer');
 
 describe('Sub Buffer', function () {
 
