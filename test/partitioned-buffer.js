@@ -1,6 +1,6 @@
 const PartitionedBuffer = require('../lib');
 const sinon = require('sinon');
-const { assert, expect } = require('chai');
+const { assert } = require('chai');
 const SubBuffer = require('../lib/sub-buffer');
 
 describe('Partitioned Buffer', () => {
@@ -131,8 +131,8 @@ describe('Partitioned Buffer', () => {
       pb.push(key2, data2);
 
       // stub all the clear() on the sub buffers to make sure they're called
-      Object.keys(pb.buffers).forEach((key, index) => {
-        const subBuffer = pb.buffers[key];
+      Object.keys(pb.buffers).forEach((k) => {
+        const subBuffer = pb.buffers[k];
         subBuffer.clear = clearStub;
       });
 
