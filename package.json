@@ -1,6 +1,6 @@
 {
   "name": "@astronomer/partitioned-buffer",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "A class that encapsulates several sub-buffers that are partitioned by a specified key",
   "main": "lib/index.js",
   "scripts": {
