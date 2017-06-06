@@ -70,7 +70,8 @@ describe('Partitioned Buffer', () => {
       pb.push(key, data);
       const buffer = pb.getSubBufferWithKey(key);
 
-      // these are timestamps made when push() is called, sometimes they can be off by a millisecond and cause the test to fail, get rid of them :)
+      // these are timestamps made when push() is called,
+      // sometimes they can be off by a millisecond and cause the test to fail, get rid of them :)
       delete expectedSubBuffer.lastFlushMillis;
       delete buffer.lastFlushMillis;
       assert.deepEqual(buffer, expectedSubBuffer);

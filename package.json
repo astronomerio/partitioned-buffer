@@ -4,20 +4,23 @@
   "description": "A class that encapsulates several sub-buffers that are partitioned by a specified key",
   "main": "lib/index.js",
   "scripts": {
+    "lint": "eslint lib",
     "test": "mocha test/test.js",
-    "test-watch": "mocha -w test/test.js"
+    "test-watch": "mocha -w test/test.js",
+    "prepublish": "npm run lint && npm test"
   },
   "author": "Alois Barreras",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.0.2",
     "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^14.1.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.3",
-    "mocha": "^3.0.2",
-    "sinon": "^1.17.5"
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-config-import": "^0.13.0",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.0.1",
+    "mocha": "^3.4.2",
+    "sinon": "^2.3.2"
   }
 }
